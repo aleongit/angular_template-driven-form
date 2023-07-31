@@ -149,9 +149,9 @@ export class AppModule { }
 
 - The `ngModel` directive declared in the `FormsModule` lets you bind controls in your template-driven form to properties in your data model. When you include the directive using the syntax for two-way data binding, `[(ngModel)]`, Angular can track the value and user interaction of the control and keep the view synced with the model.
 
-    1. Edit the template file `hero-form.component.html`.
-    2. Find the `<input>` tag next to the **Name** label.
-    3. Add the `ngModel` directive, using two-way data binding syntax `[(ngModel)]="..."`.
+1. Edit the template file `hero-form.component.html`.
+2. Find the `<input>` tag next to the **Name** label.
+3. Add the `ngModel` directive, using two-way data binding syntax `[(ngModel)]="..."`.
 
 
 - **src/app/hero-form/hero-form.component.html**
@@ -172,20 +172,20 @@ TODO: remove this: {{model.name}}
 
 - To get access to the `NgForm` and the overall form status, declare a *template reference variable*.
 
-    1. Edit the template file `hero-form.component.html`.
+1. Edit the template file `hero-form.component.html`.
 
-    2. Update the `<form>` tag with a template reference variable, `#heroForm`, and set its value as follows.
+2. Update the `<form>` tag with a template reference variable, `#heroForm`, and set its value as follows.
 
-    - **src/app/hero-form/hero-form.component.html**
-    ```html
-    <form #heroForm="ngForm">
-    ```
+- **src/app/hero-form/hero-form.component.html**
+```html
+<form #heroForm="ngForm">
+```
 
-    - The `heroForm` template variable is now a reference to the `NgForm` directive instance that governs the form as a whole.
+- The `heroForm` template variable is now a reference to the `NgForm` directive instance that governs the form as a whole.
 
-    3. Run the app.
+3. Run the app.
 
-    4. Start typing in the Name input box. As you add and delete characters, you can see them appear and disappear from the data model.
+4. Start typing in the Name input box. As you add and delete characters, you can see them appear and disappear from the data model.
 
 
 
@@ -195,40 +195,85 @@ TODO: remove this: {{model.name}}
 
 - The example added a `name` attribute to the `<input>` element and set it to "name", which makes sense for the hero's name. Any unique value will do, but using a descriptive name is helpful.
 
-    1. Add similar `[(ngModel)]` bindings and `name` attributes to **Alter Ego** and **Hero Power**.
+1. Add similar `[(ngModel)]` bindings and `name` attributes to **Alter Ego** and **Hero Power**.
 
-    2. You can now remove the diagnostic messages that show interpolated values.
+2. You can now remove the diagnostic messages that show interpolated values.
 
-    3. To confirm that two-way data binding works for the entire hero model, add a new text binding with the `json` pipe at the top to the component's template, which serializes the data to a string. After these revisions, the form template should look like the following.
+3. To confirm that two-way data binding works for the entire hero model, add a new text binding with the `json` pipe at the top to the component's template, which serializes the data to a string. After these revisions, the form template should look like the following.
 
-    - **src/app/hero-form/hero-form.component.html**
-    ```html
-    {{ model | json }}
-    <div class="form-group">
-    <label for="name">Name</label>
-    <input type="text" class="form-control" id="name"
-            required
-            [(ngModel)]="model.name" name="name">
-    </div>
+- **src/app/hero-form/hero-form.component.html**
+```html
+{{ model | json }}
+<div class="form-group">
+<label for="name">Name</label>
+<input type="text" class="form-control" id="name"
+        required
+        [(ngModel)]="model.name" name="name">
+</div>
 
-    <div class="form-group">
-    <label for="alterEgo">Alter Ego</label>
-    <input type="text"  class="form-control" id="alterEgo"
-            [(ngModel)]="model.alterEgo" name="alterEgo">
-    </div>
+<div class="form-group">
+<label for="alterEgo">Alter Ego</label>
+<input type="text"  class="form-control" id="alterEgo"
+        [(ngModel)]="model.alterEgo" name="alterEgo">
+</div>
 
-    <div class="form-group">
-    <label for="power">Hero Power</label>
-    <select class="form-control"  id="power"
-            required
-            [(ngModel)]="model.power" name="power">
-        <option *ngFor="let pow of powers" [value]="pow">{{pow}}</option>
-    </select>
-    </div>
-    ```
+<div class="form-group">
+<label for="power">Hero Power</label>
+<select class="form-control"  id="power"
+        required
+        [(ngModel)]="model.power" name="power">
+    <option *ngFor="let pow of powers" [value]="pow">{{pow}}</option>
+</select>
+</div>
+```
 
-    - Notice that each `<input>` element has an `id` property. This is used by the `<label>` element's `for` attribute to match the label to its input control. This is a standard HTML feature.
+- Notice that each `<input>` element has an `id` property. This is used by the `<label>` element's `for` attribute to match the label to its input control. This is a standard HTML feature.
 
-    - Each `<input>` element also has the required `name` property that Angular uses to register the control with the form.
+- Each `<input>` element also has the required `name` property that Angular uses to register the control with the form.
 
-    4. When you have observed the effects, you can delete the `{{ model | json }}` text binding.
+4. When you have observed the effects, you can delete the `{{ model | json }}` text binding.
+
+
+
+### Track form states
+
+- Angular applies the `ng-submitted` class to `form` elements after the form has been submitted. This class can be used to change the form's style after it has been submitted.
+
+
+
+### Track control states
+
+- Adding the `NgModel` directive to a control adds class names to the control that describe its state. These classes can be used to change a control's style based on its state.
+
+- The following table describes the class names that Angular applies based on the control's state.
+
+| STATES                            | CLASS IF TRUE  |	CLASS IF FALSE
+| :-----------------------------    | :------------- | :-----------------
+| The control has been visited.	    | `ng-touched`	 | `ng-untouched`
+| The control's value has changed.	| `ng-dirty`     | `ng-pristine`
+| The control's value is valid.	    | `ng-valid`     | `ng-invalid`
+
+- Angular also applies the `ng-submitted` class to `form` elements upon submission, but not to the controls inside the `form` element.
+
+- You use these CSS classes to define the styles for your control based on its status.
+
+
+
+#### Observe control states
+
+- To see how the classes are added and removed by the framework, open the browser's developer tools and inspect the `<input>` element that represents the hero name.
+
+1. Using your browser's developer tools, find the `<input>` element that corresponds to the **Name** input box. You can see that the element has multiple CSS classes in addition to "form-control".
+
+2. When you first bring it up, the classes indicate that it has a valid value, that the value has not been changed since initialization or reset, and that the control has not been visited since initialization or reset.
+
+```html
+<input … class="form-control ng-untouched ng-pristine ng-valid" …>
+```
+
+3. Take the following actions on the Name `<input>` box, and observe which classes appear.
+    - Look but don't touch. The classes indicate that it is untouched, pristine, and valid.
+    - Click inside the name box, then click outside it. The control has now been visited, and the element has the `ng-touched` class instead of the `ng-untouched` class.
+    - Add slashes to the end of the name. It is now touched and dirty.
+    - Erase the name. This makes the value invalid, so the `ng-invalid` class replaces the `ng-valid` class.
+
