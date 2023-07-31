@@ -140,3 +140,95 @@ export class AppModule { }
   </select>
 </div>
 ```
+
+
+
+## Bind input controls to data properties
+
+- The next step is to bind the input controls to the corresponding `Hero` properties with two-way data binding, so that they respond to user input by updating the data model, and also respond to programmatic changes in the data by updating the display.
+
+- The `ngModel` directive declared in the `FormsModule` lets you bind controls in your template-driven form to properties in your data model. When you include the directive using the syntax for two-way data binding, `[(ngModel)]`, Angular can track the value and user interaction of the control and keep the view synced with the model.
+
+    1. Edit the template file `hero-form.component.html`.
+    2. Find the `<input>` tag next to the **Name** label.
+    3. Add the `ngModel` directive, using two-way data binding syntax `[(ngModel)]="..."`.
+
+
+- **src/app/hero-form/hero-form.component.html**
+```html
+<input type="text" class="form-control" id="name"
+       required
+       [(ngModel)]="model.name" name="name">
+TODO: remove this: {{model.name}}
+```
+
+- This example has a temporary diagnostic interpolation after each input tag, `{{model.name}}`, to show the current data value of the corresponding property. The comment reminds you to remove the diagnostic lines when you have finished observing the two-way data binding at work.
+
+
+
+### Access the overall form status
+
+- When you imported the `FormsModule` in your component, Angular automatically created and attached an `NgForm` directive to the `<form>` tag in the template (because `NgForm` has the selector `form` that matches `<form>` elements).
+
+- To get access to the `NgForm` and the overall form status, declare a *template reference variable*.
+
+    1. Edit the template file `hero-form.component.html`.
+
+    2. Update the `<form>` tag with a template reference variable, `#heroForm`, and set its value as follows.
+
+    - **src/app/hero-form/hero-form.component.html**
+    ```html
+    <form #heroForm="ngForm">
+    ```
+
+    - The `heroForm` template variable is now a reference to the `NgForm` directive instance that governs the form as a whole.
+
+    3. Run the app.
+
+    4. Start typing in the Name input box. As you add and delete characters, you can see them appear and disappear from the data model.
+
+
+
+### Naming control elements
+
+- When you use `[(ngModel)]` on an element, you must define a `name` attribute for that element. Angular uses the assigned name to register the element with the `NgForm` directive attached to the parent `<form>` element.
+
+- The example added a `name` attribute to the `<input>` element and set it to "name", which makes sense for the hero's name. Any unique value will do, but using a descriptive name is helpful.
+
+    1. Add similar `[(ngModel)]` bindings and `name` attributes to **Alter Ego** and **Hero Power**.
+
+    2. You can now remove the diagnostic messages that show interpolated values.
+
+    3. To confirm that two-way data binding works for the entire hero model, add a new text binding with the `json` pipe at the top to the component's template, which serializes the data to a string. After these revisions, the form template should look like the following.
+
+    - **src/app/hero-form/hero-form.component.html**
+    ```html
+    {{ model | json }}
+    <div class="form-group">
+    <label for="name">Name</label>
+    <input type="text" class="form-control" id="name"
+            required
+            [(ngModel)]="model.name" name="name">
+    </div>
+
+    <div class="form-group">
+    <label for="alterEgo">Alter Ego</label>
+    <input type="text"  class="form-control" id="alterEgo"
+            [(ngModel)]="model.alterEgo" name="alterEgo">
+    </div>
+
+    <div class="form-group">
+    <label for="power">Hero Power</label>
+    <select class="form-control"  id="power"
+            required
+            [(ngModel)]="model.power" name="power">
+        <option *ngFor="let pow of powers" [value]="pow">{{pow}}</option>
+    </select>
+    </div>
+    ```
+
+    - Notice that each `<input>` element has an `id` property. This is used by the `<label>` element's `for` attribute to match the label to its input control. This is a standard HTML feature.
+
+    - Each `<input>` element also has the required `name` property that Angular uses to register the control with the form.
+
+    4. When you have observed the effects, you can delete the `{{ model | json }}` text binding.
