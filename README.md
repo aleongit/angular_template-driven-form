@@ -79,6 +79,7 @@
 - https://angular.io/api/forms/FormGroup
 - https://angular.io/api/forms/NgModelGroup
 - https://angular.io/api/common/NgForOf
+- https://angular.io/api/core/Directive#exportAs
 
 
 

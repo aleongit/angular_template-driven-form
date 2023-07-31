@@ -235,9 +235,11 @@ TODO: remove this: {{model.name}}
 
 
 
+
 ### Track form states
 
 - Angular applies the `ng-submitted` class to `form` elements after the form has been submitted. This class can be used to change the form's style after it has been submitted.
+
 
 
 
@@ -277,3 +279,74 @@ TODO: remove this: {{model.name}}
     - Add slashes to the end of the name. It is now touched and dirty.
     - Erase the name. This makes the value invalid, so the `ng-invalid` class replaces the `ng-valid` class.
 
+
+
+### Create visual feedback for states
+
+- The `ng-valid`/`ng-invalid` pair is particularly interesting, because you want to send a strong visual signal when the values are invalid. You also want to mark required fields.
+
+- You can mark required fields and invalid data at the same time with a colored bar on the left of the input box.
+
+- To change the appearance in this way, take the following steps.
+
+1. Add definitions for the `ng-*` CSS classes.
+2. Add these class definitions to a new `forms.css` file.
+3. Add the new file to the project as a sibling to `index.html`.
+
+- **src/assets/forms.css**
+```css
+.ng-valid[required], .ng-valid.required  {
+  border-left: 5px solid #42A948; /* green */
+}
+
+.ng-invalid:not(form)  {
+  border-left: 5px solid #a94442; /* red */
+}
+```
+
+4. In the index.html file, update the `<head>` tag to include the new style sheet.
+- **src/index.html**
+```html
+<link rel="stylesheet" href="assets/forms.css">
+```
+
+
+### Show and hide validation error messages
+
+- The **Name** input box is required and clearing it turns the bar red. That indicates that something is wrong, but the user doesn't know what is wrong or what to do about it. You can provide a helpful message by checking for and responding to the control's state.
+
+- The Hero Power select box is also required, but it doesn't need this kind of error handling because the selection box already constrains the selection to valid values.
+
+- To define and show an error message when appropriate, take the following steps.
+
+1. Extend the `<input>` tag with a template reference variable that you can use to access the input box's Angular control from within the template. In the example, the variable is `#name="ngModel"`.
+
+- The template reference variable (`#name`) is set to "ngModel" because that is the value of the `NgModel.exportAs` property. This property tells Angular how to link a reference variable to a directive.
+
+2. Add a `<div>` that contains a suitable error message.
+
+3. Show or hide the error message by binding properties of the name control to the message `<div>` element's `hidden` property.
+- **src/app/hero-form/hero-form.component.html**
+```html
+<div [hidden]="name.valid || name.pristine"
+     class="alert alert-danger">
+```
+
+4. Add a conditional error message to the `name` input box, as in the following example.
+- **src/app/hero-form/hero-form.component.html**
+```html
+<label for="name">Name</label>
+<input type="text" class="form-control" id="name"
+       required
+       [(ngModel)]="model.name" name="name"
+       #name="ngModel">
+<div [hidden]="name.valid || name.pristine"
+     class="alert alert-danger">
+  Name is required
+</div>
+```
+
+- **ILLUSTRATING THE "PRISTINE" STATE**
+- In this example, you hide the message when the control is either valid or *pristine*. Pristine means the user hasn't changed the value since it was displayed in this form. If you ignore the `pristine` state, you would hide the message only when the value is valid. If you arrive in this component with a new, blank hero or an invalid hero, you'll see the error message immediately, before you've done anything.
+
+- You might want the message to display only when the user makes an invalid change. Hiding the message while the control is in the `pristine` state achieves that goal. You'll see the significance of this choice when you add a new hero to the form in the next step.
