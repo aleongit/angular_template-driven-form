@@ -10,7 +10,7 @@
 
 - *Template-driven forms* are suitable for small or simple forms, while *reactive forms* are more scalable and suitable for complex forms. For a comparison of the two approaches, see Introduction to Forms
 
-[Tutorial](tutorial.md)
+- [Tutorial](tutorial.md)
 
 
 
@@ -78,8 +78,8 @@
 - https://angular.io/api/forms/NgForm
 - https://angular.io/api/forms/FormGroup
 - https://angular.io/api/forms/NgModelGroup
-
 - https://angular.io/api/common/NgForOf
+
 
 
 ### bootstrap css
