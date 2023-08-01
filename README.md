@@ -24,11 +24,6 @@
 → 9.8.1
 
 
-## Dependencies
-
-- TODO
-
-
 
 ## Get Started
 
@@ -61,7 +56,6 @@
 
 
 ## Doc
-
 
 
 ### angular - guide
