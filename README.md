@@ -69,6 +69,7 @@
 - https://angular.io/guide/forms-overview
 - https://angular.io/guide/glossary#template
 - https://angular.io/guide/template-reference-variables
+- https://angular.io/guide/user-input
 
 
 

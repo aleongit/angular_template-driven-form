@@ -350,3 +350,125 @@ TODO: remove this: {{model.name}}
 - In this example, you hide the message when the control is either valid or *pristine*. Pristine means the user hasn't changed the value since it was displayed in this form. If you ignore the `pristine` state, you would hide the message only when the value is valid. If you arrive in this component with a new, blank hero or an invalid hero, you'll see the error message immediately, before you've done anything.
 
 - You might want the message to display only when the user makes an invalid change. Hiding the message while the control is in the `pristine` state achieves that goal. You'll see the significance of this choice when you add a new hero to the form in the next step.
+
+
+
+## Add a new hero
+
+- This exercise shows how you can respond to a native HTML button-click event by adding to the model data. To let form users add a new hero, you will add a **New Hero** button that responds to a click event.
+
+1. In the template, place a "New Hero" `<button>` element at the bottom of the form.
+
+2. In the component file, add the hero-creation method to the hero data model.
+
+- **src/app/hero-form/hero-form.component.ts**
+```ts
+newHero() {
+  this.model = new Hero(42, '', '');
+}
+```
+
+3. Bind the button's click event to a hero-creation method, `newHero()`.
+
+- **src/app/hero-form/hero-form.component.html**
+```html
+<button type="button" class="btn btn-default" (click)="newHero()">New Hero</button>
+```
+
+4. Run the application again and click the **New Hero** button. The form clears, and the required bars to the left of the input box are red, indicating invalid name and power properties. Notice that the error messages are hidden. This is because the form is pristine; you haven't changed anything yet.
+
+5. Enter a name and click **New Hero** again. Now the application displays a `Name is required` error message, because the input box is no longer pristine. The form remembers that you entered a name before clicking **New Hero**.
+
+6. To restore the pristine state of the form controls, clear all of the flags imperatively by calling the form's `reset()` method after calling the `newHero()` method.
+
+- **src/app/hero-form/hero-form.component.html**
+```html
+<button type="button" class="btn btn-default" (click)="newHero(); heroForm.reset()">New Hero</button>
+```
+
+- Now clicking **New Hero** resets both the form and its control flags.
+
+
+
+## Submit the form with *ngSubmit*
+
+- The user should be able to submit this form after filling it in. The **Submit** button at the bottom of the form does nothing on its own, but it does trigger a form-submit event because of its type (`type="submit"`). To respond to this event, take the following steps.
+
+1. Bind the form's `ngSubmit` event property to the hero-form component's `onSubmit()` method.
+
+- **src/app/hero-form/hero-form.component.html**
+```html
+<form (ngSubmit)="onSubmit()" #heroForm="ngForm">
+```
+
+2. Use the template reference variable, `#heroForm` to access the form that contains the **Submit** button and create an event binding. You will bind the form property that indicates its overall validity to the Submit button's `disabled` property.
+
+- **src/app/hero-form/hero-form.component.html**
+```html
+<button type="submit" class="btn btn-success" [disabled]="!heroForm.form.valid">Submit</button>
+```
+
+3. Run the application. Notice that the button is enabled —although it doesn't do anything useful yet.
+
+4. Delete the **Name** value. This violates the "required" rule, so it displays the error message —and notice that it also disables the **Submit** button.
+You didn't have to explicitly wire the button's enabled state to the form's validity. The FormsModule did this automatically when you defined a template reference variable on the enhanced form element, then referred to that variable in the button control.
+
+
+### Respond to form submission
+
+- To show a response to form submission, you can hide the data entry area and display something else in its place.
+
+1. Wrap the entire form in a `<div>` and bind its `hidden` property to the `HeroFormComponent.submitted` property.
+
+- **src/app/hero-form/hero-form.component.html**
+```html
+<div [hidden]="submitted">
+  <h1>Hero Form</h1>
+  <form (ngSubmit)="onSubmit()" #heroForm="ngForm">
+
+     <!-- ... all of the form ... -->
+
+  </form>
+</div>
+```
+
+- The main form is visible from the start because the `submitted` property is false until you submit the form, as this fragment from the `HeroFormComponent` shows:
+
+- **src/app/hero-form/hero-form.component.ts**
+```ts
+submitted = false;
+
+onSubmit() { this.submitted = true; }
+```
+
+- When you click the **Submit** button, the `submitted` flag becomes true and the form disappears.
+
+
+2. To show something else while the form is in the submitted state, add the following HTML below the new `<div>` wrapper.
+
+- **src/app/hero-form/hero-form.component.html**
+```html
+<div [hidden]="!submitted">
+  <h2>You submitted the following:</h2>
+  <div class="row">
+    <div class="col-xs-3">Name</div>
+    <div class="col-xs-9">{{ model.name }}</div>
+  </div>
+  <div class="row">
+    <div class="col-xs-3">Alter Ego</div>
+    <div class="col-xs-9">{{ model.alterEgo }}</div>
+  </div>
+  <div class="row">
+    <div class="col-xs-3">Power</div>
+    <div class="col-xs-9">{{ model.power }}</div>
+  </div>
+  <br>
+  <button type="button" class="btn btn-primary" (click)="submitted=false">Edit</button>
+</div>
+```
+
+- This `<div>`, which shows a read-only hero with interpolation bindings, appears only while the component is in the submitted state.
+
+- The alternative display includes an *Edit* button whose click event is bound to an expression that clears the `submitted` flag.
+
+3. Click the *Edit* button to switch the display back to the editable form.
